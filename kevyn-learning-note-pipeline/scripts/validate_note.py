@@ -98,16 +98,22 @@ def split_units(text):
 
 
 def flat_bold_problems(unit):
-    """Return the flat-bold faults inside one unit (parity, then nesting)."""
+    """Return the flat-bold faults inside one unit (parity, then nesting).
+
+    Markup quoted inside an inline code span is text, not markup, so `` `**a **b** c**` ``
+    is masked out before scanning. Masking with spaces keeps the reported offsets aligned
+    with the original unit.
+    """
     problems = []
-    if unit.count("**") % 2:
+    masked = re.sub(r"`[^`]*`", lambda m: " " * len(m.group(0)), unit)
+    if masked.count("**") % 2:
         problems.append(("bold parity", unit[:110]))
     open_span = False
     i = 0
-    while i < len(unit) - 1:
-        if unit[i:i + 2] == "**":
+    while i < len(masked) - 1:
+        if masked[i:i + 2] == "**":
             if open_span:
-                following = unit[i + 2:i + 3]
+                following = masked[i + 2:i + 3]
                 if following and (following.isalnum() or following in MARKER_GLYPHS):
                     problems.append(("nested bold", unit[max(0, i - 70):i + 70]))
                 open_span = False

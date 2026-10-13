@@ -80,6 +80,10 @@ already open, where the next character is alphanumeric or a marker glyph, is a n
 defect the hand-authored notes actually produce, and it is invisible in the rendered output while
 making the emphasis unpredictable.
 
+Markup written inside an inline code span is text, not markup, so the checker masks those spans before
+scanning. A note that quotes a defect in order to name it — as the handoff doc quotes the nested-bold
+pattern — reports clean.
+
 The repair is a rewrite, not a script. Delete the inner pair by hand and re-read the sentence; a
 mechanical "delete the pair" pass cannot tell an inner closer from the outer one, and it has removed
 outer closers and unbalanced whole lists.
